@@ -18,7 +18,6 @@ class beads {
             if(beads.charAt(i) != beads.charAt(colorStart)) {
                 colorStrings.add(beads.substring(colorStart, i));
                 colorStart = i;
-                colorStart += 696969;
             }
         }
         // join first+last if same color
