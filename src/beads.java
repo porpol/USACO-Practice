@@ -35,16 +35,61 @@ class beads {
 
         int maxBeads = 0;
         int s = colorStrings.size();
-        for(int i = 0; i < colorStrings.size(); i++) {
-            String beadJoined = colorStrings.get(i).length() + colorStrings.get(loopedIndex(i-1, s));
+        // Loop thru breakpoints
+        for(int i = 0; i < s; i++) {
+            // HashMap to not repeat indexes while looping through strings
+            HashSet<Integer> includedIndexes = new HashSet<Integer>();
+            // Automatically include the two strings at breakpoint
+            includedIndexes.add(i);
+            includedIndexes.add(loopedIndex(i-1, s));
+
             // TODO: search forward and backward.
             // TODO: keep track of current color, include white strings always.
+
+            // Forward
+            char initColor = colorStrings.get(i).charAt(0);
+            for(int j = loopedIndex(i+1, s); j != i; j = loopedIndex(j+1, s)) {
+                char curColor = colorStrings.get(j).charAt(0);
+                if(initColor == 'w' && curColor != 'w') {
+                    includedIndexes.add(j);
+                    initColor = curColor;
+                }else if(curColor == 'w') {
+                    includedIndexes.add(j);
+                }else if(curColor == initColor) {
+                    includedIndexes.add(j);
+                }
+            }
+
+            // Backward
+            initColor = colorStrings.get(loopedIndex(i-1, s)).charAt(0);
+            for(int j = loopedIndex(i-2, s); j != loopedIndex(i-1, s); j = loopedIndex(j-1, s)) {
+                char curColor = colorStrings.get(j).charAt(0);
+                if(initColor == 'w' && curColor != 'w') {
+                    includedIndexes.add(j);
+                    initColor = curColor;
+                }else if(curColor == 'w') {
+                    includedIndexes.add(j);
+                }else if(curColor == initColor) {
+                    includedIndexes.add(j);
+                }
+            }
+
+            // ADD UP # OF BEADS USING INCLUDED INDEXES
+            int beadSum = 0;
+            for(int ind: includedIndexes) {
+                beadSum += colorStrings.get(ind).length();
+            }
+            if(beadSum > maxBeads) {
+                maxBeads = beadSum;
+            }
         }
+
+        System.out.println(maxBeads);
     }
 
     public static int loopedIndex(int ind, int size) {
         if(ind < 0) {
-            return size - (ind%size);
+            return size + (ind%size);
         }
         return ind%size;
     }
